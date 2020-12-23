@@ -1,19 +1,19 @@
 package spreadsheet
 
 import (
-  "encoding/json"
+	"encoding/json"
 	"io/ioutil"
 	"net/http"
 	"os"
 )
 
-type SheetData []struct {
+type SheetData struct {
 	Name     string `json:"name"`
 	Slack    string `json:"slack"`
 	Birthday string `json:"birthday"`
 }
 
-func GetData() (SheetData, error) {
+func GetData() ([]SheetData, error) {
 	req, err := http.NewRequest("GET", os.Getenv("SPREADSHEET_URL"), nil)
 	if err != nil {
 		return nil, err
@@ -30,11 +30,11 @@ func GetData() (SheetData, error) {
 		return nil, err
 	}
 
-	data := new(SheetData)
-	err = json.Unmarshal(body, data)
+	var data []SheetData
+	err = json.Unmarshal(body, &data)
 	if err != nil {
 		return nil, err
 	}
 
-	return *data, nil
+	return data, nil
 }
